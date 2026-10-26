@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>COSMO — Lookbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="lookbook.css">
+</head>
+<body>
+
+<div id="splash" aria-hidden="true">
+  <div class="splash-inner">
+    <svg class="splash-logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="splash-arc" d="M21.78,10.22 A11,11 0 1,0 21.78,25.78" stroke="#E0D8D0" stroke-width="2.5" stroke-linecap="round"/>
+      <polygon class="splash-star" points="28,14 29.13,16.87 32,18 29.13,19.13 28,22 26.87,19.13 24,18 26.87,16.87" fill="#C8A4B4"/>
+    </svg>
+    <p class="splash-name">COSMO</p>
+    <p class="splash-sub">lookbook</p>
+  </div>
+</div>
+<script>document.getElementById('splash').addEventListener('animationend',function(e){if(e.animationName==='splash-out')this.style.display='none';});</script>
+
+  <!-- NAV -->
+  <nav class="lb-nav">
+    <a href="index.html" class="lb-nav-back">
+      <i class="fa-solid fa-arrow-left"></i> Volver a la tienda
+    </a>
+    <a href="index.html" class="lb-nav-logo"><svg class="cosmo-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none" aria-label="COSMO" role="img"><path d="M21.78,10.22 A11,11 0 1,0 21.78,25.78" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><polygon points="28,14 29.13,16.87 32,18 29.13,19.13 28,22 26.87,19.13 24,18 26.87,16.87" fill="currentColor"/></svg></a>
+    <div class="lb-nav-icons">
+      <span style="display:inline-flex;align-items:flex-start;">
+        <button class="nav-icon" onclick="openWishlist()" title="Favoritos"><i class="fa-regular fa-heart"></i></button>
+        <span class="cart-badge" id="wish-badge" style="display:none;background:var(--rosa-dark)">0</span>
+      </span>
+      <span style="display:inline-flex;align-items:flex-start;">
+        <button class="nav-icon" onclick="openCart()" title="Carrito"><i class="fa-solid fa-cart-shopping"></i></button>
+        <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+      </span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="lb-hero">
+    <div class="lb-hero-eyebrow">COSMO · 2025</div>
+    <h1 class="lb-hero-title"><em>Look</em>book</h1>
+    <p class="lb-hero-sub">Looks armados, combinaciones que funcionan. Llevatelos todos o elegí los que más te hablan.</p>
+  </header>
+
+  <!-- LOOKS GRID -->
+  <main class="lb-grid" id="lb-grid">
+    <!-- Renderizado por lookbook.js -->
+  </main>
+
+  <!-- OVERLAY -->
+  <div class="panel-overlay" id="panel-overlay" onclick="closeAllPanels()"></div>
+
+  <!-- PANEL: WISHLIST -->
+  <div class="side-panel" id="panel-wishlist">
+    <div class="panel-header">
+      <span class="panel-title">Favoritos</span>
+      <button class="panel-close" onclick="closePanel('panel-wishlist')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="panel-body">
+      <div id="wishlist-items"></div>
+    </div>
+  </div>
+
+  <!-- PANEL: CART -->
+  <div class="side-panel" id="panel-cart">
+    <div class="panel-header">
+      <span class="panel-title">Carrito</span>
+      <button class="panel-close" onclick="closePanel('panel-cart')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="panel-body">
+      <div id="cart-items"></div>
+    </div>
+    <div class="panel-footer" id="cart-footer" style="display:none">
+      <div class="cart-totals">
+        <div class="cart-total-row"><span>Subtotal</span><span id="cart-subtotal"></span></div>
+        <div class="cart-total-row"><span>Envío <span style="font-size:10px;color:var(--gris)">(gratis +$8.000)</span></span><span id="cart-shipping"></span></div>
+        <div class="cart-total-row main"><span>Total</span><span id="cart-total"></span></div>
+      </div>
+      <button class="btn-full rosa">Finalizar compra</button>
+      <button class="btn-full" onclick="closePanel('panel-cart')">Seguir comprando</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="lb-footer">
+    <span class="lb-footer-logo"><svg class="cosmo-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none" aria-label="COSMO" role="img"><path d="M21.78,10.22 A11,11 0 1,0 21.78,25.78" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><polygon points="28,14 29.13,16.87 32,18 29.13,19.13 28,22 26.87,19.13 24,18 26.87,16.87" fill="currentColor"/></svg></span>
+    ✦ bijouterie · todos los derechos reservados
+  </footer>
+
+  <script defer src="/__/firebase/12.12.0/firebase-app-compat.js"></script>
+  <script defer src="/__/firebase/12.12.0/firebase-firestore-compat.js"></script>
+  <script defer src="/__/firebase/init.js"></script>
+  <script defer src="lookbook.js"></script>
+</body>
+</html>

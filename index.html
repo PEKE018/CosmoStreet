@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>COSMO STREET</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div id="splash" aria-hidden="true">
+  <div class="splash-inner">
+    <svg class="splash-logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="splash-arc" d="M21.78,10.22 A11,11 0 1,0 21.78,25.78" stroke="#E0D8D0" stroke-width="2.5" stroke-linecap="round"/>
+      <polygon class="splash-star" points="28,14 29.13,16.87 32,18 29.13,19.13 28,22 26.87,19.13 24,18 26.87,16.87" fill="#C8A4B4"/>
+    </svg>
+    <p class="splash-name">COSMO</p>
+    <p class="splash-sub">Accesorios</p>
+  </div>
+</div>
+<script>document.getElementById('splash').addEventListener('animationend',function(e){if(e.animationName==='splash-out')this.style.display='none';});</script>
+
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-logo"><svg class="cosmo-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none" aria-label="COSMO" role="img"><path d="M21.78,10.22 A11,11 0 1,0 21.78,25.78" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><polygon points="28,14 29.13,16.87 32,18 29.13,19.13 28,22 26.87,19.13 24,18 26.87,16.87" fill="currentColor"/></svg><span class="nav-logo-text">COSMO</span></span>
+    <ul class="nav-links">
+      <li><a href="#" onclick="goToCategory('collares');return false;">Collares</a></li>
+      <li><a href="#" onclick="goToCategory('pulseras');return false;">Pulseras</a></li>
+      <li><a href="#" onclick="goToCategory('aros');return false;">Aros</a></li>
+      <li><a href="#" onclick="goToCategory('anillos');return false;">Anillos</a></li>
+      <li><a href="#" onclick="goToCategory(null);return false;">Kits</a></li>
+    </ul>
+    <div class="nav-icons">
+      <button class="nav-icon" onclick="openSearch()" title="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <span style="display:inline-flex;align-items:flex-start;">
+        <button class="nav-icon" onclick="openWishlist()" title="Favoritos"><i class="fa-regular fa-heart"></i></button>
+        <span class="cart-badge" id="wish-badge" style="display:none;background:var(--rosa-dark)">0</span>
+      </span>
+      <span style="display:inline-flex;align-items:flex-start;">
+        <button class="nav-icon" onclick="openCart()" title="Carrito"><i class="fa-solid fa-cart-shopping"></i></button>
+        <span class="cart-badge" id="cart-badge">0</span>
+      </span>
+    </div>
+  </nav>
+
+  <!-- OVERLAY -->
+  <div class="panel-overlay" id="panel-overlay" onclick="closeAllPanels()"></div>
+
+  <!-- PANEL: SEARCH -->
+  <div class="side-panel" id="panel-search">
+    <div class="panel-header">
+      <span class="panel-title">Buscar</span>
+      <button class="panel-close" onclick="closePanel('panel-search')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="panel-body">
+      <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="search-input" class="search-input" type="text" placeholder="Collar, pulsera, aros..." oninput="handleSearch(this.value)">
+      </div>
+      <div class="search-results" id="search-results">
+        <div class="search-empty"><i class="fa-solid fa-magnifying-glass"></i>Escribí para buscar productos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: WISHLIST -->
+  <div class="side-panel" id="panel-wishlist">
+    <div class="panel-header">
+      <span class="panel-title">Favoritos</span>
+      <button class="panel-close" onclick="closePanel('panel-wishlist')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="panel-body">
+      <div id="wishlist-items"></div>
+    </div>
+  </div>
+
+  <!-- PANEL: CART -->
+  <div class="side-panel" id="panel-cart">
+    <div class="panel-header">
+      <span class="panel-title">Carrito</span>
+      <button class="panel-close" onclick="closePanel('panel-cart')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="panel-body">
+      <div id="cart-items"></div>
+    </div>
+    <div class="panel-footer" id="cart-footer" style="display:none">
+      <div class="cart-totals">
+        <div class="cart-total-row"><span>Subtotal</span><span id="cart-subtotal"></span></div>
+        <div class="cart-total-row"><span>Envío <span style="font-size:10px;color:var(--gris)">(gratis +$8.000)</span></span><span id="cart-shipping"></span></div>
+        <div class="cart-total-row main"><span>Total</span><span id="cart-total"></span></div>
+      </div>
+      <button class="btn-full rosa" onclick="checkout()">Finalizar compra</button>
+      <button class="btn-full" onclick="closePanel('panel-cart')">Seguir comprando</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <span class="hero-tag">✦ Nueva colección 2026</span>
+      <h1 class="hero-title">Accesorios que <em>hablan</em> por vos.</h1>
+      <p class="hero-sub">Accesorios con estética urbana. Diseñadas para vos, que no pasas desapercibid@.</p>
+      <button class="btn-primary" onclick="goToCategory(null)">Ver colección</button>
+      <button class="btn-outline" onclick="window.location.href='lookbook.html'">Lookbook</button>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card hc1" onclick="goToCategory('collares')">
+        <span><i class="fa-solid fa-link"></i></span>
+        <span class="hero-card-label">Collares</span>
+      </div>
+      <div class="hero-card hc2" onclick="goToCategory('aros')">
+        <span><i class="fa-solid fa-circle-dot"></i></span>
+        <span class="hero-card-label" style="color:var(--lila-dark)">Aros</span>
+      </div>
+      <div class="hero-card hc3" onclick="goToCategory('pulseras')">
+        <span><i class="fa-solid fa-gem"></i></span>
+        <span class="hero-card-label">Pulseras</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner" id="ticker">
+      <span>Envíos a todo el país<span class="ticker-dot">✦</span></span>
+      <span>Nuevos ingresos cada semana<span class="ticker-dot">✦</span></span>
+      <span>Bijou sin níquel · hipoalergénico<span class="ticker-dot">✦</span></span>
+      <span>Pagos en cuotas sin interés<span class="ticker-dot">✦</span></span>
+      <span>+500 clientas satisfechas<span class="ticker-dot">✦</span></span>
+      <span>Envíos a todo el país<span class="ticker-dot">✦</span></span>
+      <span>Nuevos ingresos cada semana<span class="ticker-dot">✦</span></span>
+      <span>Bijou sin níquel · hipoalergénico<span class="ticker-dot">✦</span></span>
+      <span>Pagos en cuotas sin interés<span class="ticker-dot">✦</span></span>
+      <span>+500 clientas satisfechas<span class="ticker-dot">✦</span></span>
+    </div>
+  </div>
+
+  <!-- CATEGORÍAS -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Categorías</h2>
+      <a class="section-link" onclick="goToCategory(null)">Ver todo ↗</a>
+    </div>
+    <div class="cats-grid">
+      <div class="cat-card c-beige" data-cat="collares" onclick="goToCategory('collares')">
+        <span class="cat-icon"><i class="fa-solid fa-link"></i></span>
+        <span class="cat-name">Collares</span>
+        <span class="cat-count"></span>
+      </div>
+      <div class="cat-card c-rosa" data-cat="pulseras" onclick="goToCategory('pulseras')">
+        <span class="cat-icon"><i class="fa-solid fa-gem"></i></span>
+        <span class="cat-name">Pulseras</span>
+        <span class="cat-count"></span>
+      </div>
+      <div class="cat-card c-lila" data-cat="aros" onclick="goToCategory('aros')">
+        <span class="cat-icon"><i class="fa-solid fa-circle-dot"></i></span>
+        <span class="cat-name">Aros</span>
+        <span class="cat-count"></span>
+      </div>
+      <div class="cat-card c-dark" data-cat="anillos" onclick="goToCategory('anillos')">
+        <span class="cat-icon"><i class="fa-solid fa-ring"></i></span>
+        <span class="cat-name" style="color:white">Anillos</span>
+        <span class="cat-count" style="color:#666"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS DESTACADOS -->
+  <section class="section bg-beige" id="seccion-catalogo">
+    <div class="section-header">
+      <h2 class="section-title" id="catalog-title">Más vendidos</h2>
+      <a class="section-link" onclick="goToCategory(null)">Ver todos ↗</a>
+    </div>
+    <div class="filter-bar" id="filter-bar">
+      <span class="filter-bar-label">Filtrando</span>
+      <span class="filter-chip">
+        <span id="filter-chip-label"></span>
+        <button class="filter-chip-close" onclick="clearFilter()" title="Quitar filtro">✕</button>
+      </span>
+      <span class="filter-count" id="filter-count"></span>
+    </div>
+    <div class="products-grid" id="products-grid">
+<!-- products rendered by index.js renderProductGrid() -->
+
+    </div>
+  </section>
+
+  <!-- BANNER NEGRO -->
+  <section class="banner">
+    <div>
+      <div class="banner-eyebrow">✦ Edición limitada</div>
+      <h2 class="banner-title">Street Accesorios<br/><em>drop 001</em></h2>
+      <p class="banner-sub">Piezas con estética urbana y actitud. Colección cápsula de 20 diseños exclusivos. Una vez agotadas, no vuelven.</p>
+      <button class="banner-btn" onclick="goToCategory(null)">Ver el drop ↗</button>
+      <div class="banner-tags">
+        <span class="banner-tag">Edición limitada</span>
+        <span class="banner-tag">Sin repetición</span>
+        <span class="banner-tag">Drop mensual</span>
+      </div>
+    </div>
+    <div class="banner-visual">
+      <div class="banner-col">
+        <div class="bv-pill">
+          <span class="bv-icon"><i class="fa-solid fa-truck"></i></span>
+          <div class="bv-label"><strong>Envío gratis</strong>en compras +$8.000</div>
+        </div>
+        <div class="bv-pill">
+          <span class="bv-icon"><i class="fa-solid fa-credit-card"></i></span>
+          <div class="bv-label"><strong>6 cuotas</strong>sin interés</div>
+        </div>
+        <div class="bv-pill">
+          <span class="bv-icon"><i class="fa-solid fa-arrows-rotate"></i></span>
+          <div class="bv-label"><strong>Cambios</strong>hasta 15 días</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Nuestros clientes... ✦</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Me enamoré del collar Luna. Ya lo usé mil veces y sigue impecable. Super rápido el envío también."</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--lila-light);color:var(--lila-dark)">JM</div>
+          <div>
+            <div class="review-name">Juli M.</div>
+            <div class="review-date">Rosario · hace 3 días</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Compré el stack pack y es exactamente como en las fotos. La calidad sorprende por el precio, sin dudas vuelvo."</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:#F9E5EA;color:var(--rosa-dark)">SV</div>
+          <div>
+            <div class="review-name">Sofi V.</div>
+            <div class="review-date">CABA · hace 1 semana</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★☆</div>
+        <p class="review-text">"Los aros Viola son una bomba. Me los puse a una fiesta y me preguntaron mil veces dónde los había comprado."</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--beige);color:var(--negro)">LR</div>
+          <div>
+            <div class="review-name">Luci R.</div>
+            <div class="review-date">Córdoba · hace 2 semanas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CHECKOUT MODAL ══ -->
+  <div class="co-overlay" id="co-overlay" onclick="closeCheckout(event)">
+    <div class="co-card" id="co-card">
+
+      <!-- HEADER -->
+      <div class="co-header">
+        <span class="co-title">Confirmar pedido</span>
+        <button class="co-close" onclick="closeCheckout(true)"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- RESUMEN DEL PEDIDO -->
+      <div class="co-summary" id="co-summary"></div>
+
+      <!-- FORM -->
+      <div id="co-form-wrap">
+        <form id="co-form" onsubmit="return false">
+
+          <div class="co-section-label">Tus datos</div>
+          <div class="co-row">
+            <div class="co-field">
+              <label class="co-label">Nombre y apellido *</label>
+              <input id="co-name" class="co-input" type="text" placeholder="Ej: Lucía Méndez" required>
+            </div>
+            <div class="co-field">
+              <label class="co-label">WhatsApp / Teléfono *</label>
+              <input id="co-phone" class="co-input" type="tel" placeholder="Ej: 3537 612345" required>
+            </div>
+          </div>
+          <div class="co-row">
+            <div class="co-field">
+              <label class="co-label">Provincia *</label>
+              <select id="co-province" class="co-input" required>
+                <option value="">— Seleccioná —</option>
+                <option>Buenos Aires</option><option>CABA</option><option>Catamarca</option>
+                <option>Chaco</option><option>Chubut</option><option>Córdoba</option>
+                <option>Corrientes</option><option>Entre Ríos</option><option>Formosa</option>
+                <option>Jujuy</option><option>La Pampa</option><option>La Rioja</option>
+                <option>Mendoza</option><option>Misiones</option><option>Neuquén</option>
+                <option>Río Negro</option><option>Salta</option><option>San Juan</option>
+                <option>San Luis</option><option>Santa Cruz</option><option>Santa Fe</option>
+                <option>Santiago del Estero</option><option>Tierra del Fuego</option><option>Tucumán</option>
+              </select>
+            </div>
+            <div class="co-field">
+              <label class="co-label">Ciudad / Localidad *</label>
+              <input id="co-city" class="co-input" type="text" placeholder="Ej: Villa del Rosario" required>
+            </div>
+          </div>
+
+          <div class="co-section-label" style="margin-top:1.25rem">Envío</div>
+          <div class="co-options" id="co-shipping-opts">
+            <label class="co-option">
+              <input type="radio" name="co-shipping" value="correo" checked>
+              <span class="co-option-box"><i class="fa-solid fa-envelope"></i> Correo Argentino</span>
+            </label>
+            <label class="co-option">
+              <input type="radio" name="co-shipping" value="andreani">
+              <span class="co-option-box"><i class="fa-solid fa-truck"></i> Andreani</span>
+            </label>
+            <label class="co-option">
+              <input type="radio" name="co-shipping" value="retiro">
+              <span class="co-option-box"><i class="fa-solid fa-handshake"></i> Retiro acordado</span>
+            </label>
+          </div>
+
+          <div class="co-section-label" style="margin-top:1.25rem">Pago</div>
+          <div class="co-options">
+            <label class="co-option">
+              <input type="radio" name="co-payment" value="transferencia" checked>
+              <span class="co-option-box"><i class="fa-solid fa-building-columns"></i> Transferencia</span>
+            </label>
+            <label class="co-option">
+              <input type="radio" name="co-payment" value="mercadopago">
+              <span class="co-option-box"><i class="fa-solid fa-mobile-screen"></i> Mercado Pago</span>
+            </label>
+            <label class="co-option">
+              <input type="radio" name="co-payment" value="efectivo">
+              <span class="co-option-box"><i class="fa-solid fa-money-bill-wave"></i> Efectivo</span>
+            </label>
+          </div>
+
+          <div class="co-field" style="margin-top:1.25rem">
+            <label class="co-label">Aclaraciones <span style="color:#555">(opcional)</span></label>
+            <textarea id="co-notes" class="co-input" rows="2" placeholder="Ej: Dejar en portería, regalo, etc."></textarea>
+          </div>
+
+          <p id="co-error" class="co-error"></p>
+          <button id="co-submit-btn" class="co-submit-btn" type="button" onclick="submitCheckout()">
+            <i class="fa-brands fa-whatsapp"></i> Confirmar pedido por WhatsApp
+          </button>
+          <p class="co-hint">Tu pedido se va a guardar y te vamos a contactar por WhatsApp para coordinar el pago y envío.</p>
+        </form>
+      </div>
+
+      <!-- SUCCESS -->
+      <div id="co-success" style="display:none">
+        <div class="co-success-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="co-success-title">¡Pedido registrado!</div>
+        <div class="co-success-sub" id="co-success-id"></div>
+        <p class="co-success-msg">Se abrió WhatsApp con los detalles de tu pedido. Si no se abrió, <a id="co-wa-link" href="#" target="_blank" rel="noopener">hacé click acá</a>.</p>
+        <button class="co-submit-btn" style="margin-top:1.5rem" onclick="closeCheckout(true)">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo" id="footer-logo-admin" onclick="adminTap()"><svg class="cosmo-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none" aria-label="COSMO" role="img"><path d="M21.78,10.22 A11,11 0 1,0 21.78,25.78" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><polygon points="28,14 29.13,16.87 32,18 29.13,19.13 28,22 26.87,19.13 24,18 26.87,16.87" fill="currentColor"/></svg><span class="footer-logo-text">COSMO</span></div>
+        <p class="footer-desc">Accesorios con actitud. Piezas diseñadas para mujeres que eligen no pasar desapercibidas.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Tienda</div>
+        <ul class="footer-links">
+          <li><a href="#">Novedades</a></li>
+          <li><a href="#">Más vendidos</a></li>
+          <li><a href="#">Drops</a></li>
+          <li><a href="#">Kits y combos</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Info</div>
+        <ul class="footer-links">
+          <li><a href="#">Cómo comprar</a></li>
+          <li><a href="#">Envíos y cambios</a></li>
+          <li><a href="#">Mayoristas</a></li>
+          <li><a href="#">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Contacto</div>
+        <ul class="footer-links">
+          <li><a href="https://wa.me/5493537600803" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="https://www.instagram.com/cosmo.street" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="https://www.tiktok.com/@cosmo.street" target="_blank" rel="noopener">TikTok</a></li>
+          <li><a href="mailto:cosmo.street@gmail.com">Email</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 COSMO — Accesorios. Hecho con <i class="fa-solid fa-heart" style="color:var(--lila)"></i> de Argentina para el mundo.</span>
+
+      <script>
+        var _adminTaps = 0, _adminTimer = null;
+        function adminTap() {
+          _adminTaps++;
+          clearTimeout(_adminTimer);
+          if (_adminTaps >= 4) {
+            _adminTaps = 0;
+            window.location.href = 'admin.html';
+          } else {
+            _adminTimer = setTimeout(function () { _adminTaps = 0; }, 1200);
+          }
+        }
+      </script>
+      <div class="footer-socials">
+        <a class="social-btn" href="https://www.instagram.com/cosmo.street" target="_blank" rel="noopener" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a class="social-btn" href="https://www.tiktok.com/@cosmo.street" target="_blank" rel="noopener" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        <a class="social-btn" href="https://wa.me/5493537600803" target="_blank" rel="noopener" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    // Instant fallback from localStorage while Firestore loads asynchronously.
+    var tickerData = JSON.parse(localStorage.getItem('cosmo_ticker') || 'null');
+    if (tickerData && tickerData.length) {
+      var inner = document.getElementById('ticker');
+      if (inner) {
+        var double = tickerData.concat(tickerData);
+        inner.innerHTML = double.map(function (t) {
+          return '<span>' + t + '<span class="ticker-dot">✦</span></span>';
+        }).join('');
+      }
+    }
+    var heroData = JSON.parse(localStorage.getItem('cosmo_hero') || 'null');
+    if (heroData) {
+      var tagEl   = document.querySelector('.hero-tag');
+      var titleEl = document.querySelector('.hero-title');
+      var subEl   = document.querySelector('.hero-sub');
+      if (tagEl   && heroData.tag)   tagEl.textContent = heroData.tag;
+      if (titleEl && heroData.title) titleEl.innerHTML = heroData.title;
+      if (subEl   && heroData.sub)   subEl.textContent = heroData.sub;
+    }
+  })();
+</script>
+<script defer src="/__/firebase/12.12.0/firebase-app-compat.js"></script>
+<script defer src="/__/firebase/12.12.0/firebase-firestore-compat.js"></script>
+<script defer src="/__/firebase/init.js"></script>
+<script defer src="index.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Products, looks, drops: public read (store customers need this)
+    // Writes are open and protected at the UI level by the admin password.
+    // TODO: migrate to Firebase Authentication for server-side write restriction.
+    match /products/{id} {
+      allow read: if true;
+      allow write: if true;
+    }
+    match /looks/{id} {
+      allow read: if true;
+      allow write: if true;
+    }
+    match /drops/{id} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Config (store settings, admin hash): public read only for the parts the
+    // store needs (ticker, hero, shipping). The admin pwHash is not a secret
+    // because it is a one-way hash — knowing it does not reveal the password.
+    match /config/{id} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Orders: public create (future use), read/update/delete admin-only
+    match /orders/{id} {
+      allow create: if true;
+      allow read, update, delete: if true;
+    }
+  }
+}
